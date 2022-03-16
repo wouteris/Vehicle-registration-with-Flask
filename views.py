@@ -2,30 +2,32 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from models import vehicle, vehicle_group
 from __init__ import db
 
+
 views = Blueprint('views', __name__)
 
+
+#main route for the vehicle form
 @views.route('/')
-def index():
-    #return "This is an example app"
+def indexvehicle():
     vehiclesdata = vehicle.query.all()
     vehiclesgroupdata = vehicle_group.query.all()
     return render_template("vehicle.html", vehicles = vehiclesdata, vehiclesgroup = vehiclesgroupdata)
 
+
+#main route for the vehicle_group form
 @views.route('/vehicle_groupselect')
-def vehicle_grouptest():
-    #return "This is an example app"
+def indexgroup():
     vehiclegroupdata = vehicle_group.query.all()
     return render_template("vehicle_group.html",vehicles_group = vehiclegroupdata)
     
+    
+#main route for the about form
 @views.route('/about')
 def about():
     return render_template('about.html')
 
-
-def input():
-     pass
  
-
+#this is our update route where we are going to add a vehicle
 @views.route("/insert",methods=['POST'])
 def insert():
     if request.method == 'POST':
@@ -37,9 +39,10 @@ def insert():
         db.session.add(newDescription)
         db.session.commit()
         flash('Vehicle created!',category='success')
-    return redirect(url_for('views.index'))
+    return redirect(url_for('views.indexvehicle'))
 
-#this is our update route where we are going to update our employee
+
+#this is our update route where we are going to update our vehicle
 @views.route('/update', methods = ['GET', 'POST'])
 def update():
  
@@ -54,10 +57,10 @@ def update():
         db.session.commit()
         flash("Vehicle updated successfully")
  
-        return redirect(url_for('views.index'))
+        return redirect(url_for('views.indexvehicle'))
     
   
-#This route is for deleting our employee
+#This route is for deleting our vehicle
 @views.route('/delete/<vehicleid>/', methods = ['GET', 'POST'])
 def delete(vehicleid):
     my_data = vehicle.query.get(vehicleid)
@@ -65,8 +68,21 @@ def delete(vehicleid):
     db.session.commit()
     flash("Vehicle Deleted Successfully")
  
-    return redirect(url_for('views.index'))
+    return redirect(url_for('views.indexvehicle'))
 
+
+#This route is for deleting our vehicle_group
+@views.route('/deletegroup/<vehicle_groupid>/', methods = ['GET', 'POST'])
+def deletegroup(vehicle_groupid):
+    my_data = vehicle_group.query.get(vehicle_groupid)
+    db.session.delete(my_data)
+    db.session.commit()
+    flash("Vehicle Deleted Successfully")
+ 
+    return redirect(url_for('views.indexgroup'))
+
+
+#this is our update route where we are going to add a vehicle_group
 @views.route("/insertgroup",methods=['POST'])
 def insertgroup():
     if request.method == 'POST':
@@ -77,9 +93,10 @@ def insertgroup():
         db.session.add(newgroupDescription)
         db.session.commit()
         flash('Vehicle group created!',category='success')
-    return redirect(url_for('views.vehicle_grouptest')) 
+    return redirect(url_for('views.indexgroup')) 
 
 
+#this is our update route where we are going to update our vehicle_group
 @views.route('/updategroup', methods = ['GET', 'POST'])
 def updategroup():
  
@@ -94,4 +111,4 @@ def updategroup():
         db.session.commit()
         flash("Group Updated Successfully")
  
-        return redirect(url_for('views.vehicle_grouptest'))
+        return redirect(url_for('views.indexgroup'))
